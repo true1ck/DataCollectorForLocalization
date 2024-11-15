@@ -102,6 +102,15 @@
             android:textSize="16sp"
             android:textColor="#333333"
             android:paddingBottom="16dp" />
+        <EditText
+            android:id="@+id/etAdditionalField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter additional information"
+            android:inputType="text"
+            android:padding="8dp"
+            android:layout_marginBottom="16dp" />
+
 
         <!-- Button to Start Data Collection -->
         <Button
@@ -135,5 +144,6 @@
             android:background="#E0E0E0"
             android:textColor="#333333"
             android:layout_marginTop="16dp" />
+
     </LinearLayout>
 </ScrollView>

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int MOVING_AVG_WINDOW = 2; // Smaller size for more sensitivity
 
 
+    private EditText etAdditionalField; // Declare EditText variable
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         tvSignalStrength2 = findViewById(R.id.tvSignalStrength2);
         tvSignalStrength3 = findViewById(R.id.tvSignalStrength3);
         tvEntryCount = findViewById(R.id.tvEntryCount);
+        etAdditionalField = findViewById(R.id.etAdditionalField); // Initialize the EditText field
 
         // Initialize WifiManager
         wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
@@ -78,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         // Button click listener
         btnStart.setOnClickListener(v -> startDataCollection());
     }
+
 
     private void loadWifiNetworks() {
         if (!wifiManager.isWifiEnabled()) {
@@ -120,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         String ssid1 = spinnerHotspot1.getSelectedItem().toString();
         String ssid2 = spinnerHotspot2.getSelectedItem().toString();
         String ssid3 = spinnerHotspot3.getSelectedItem().toString();
+
 
         if (ssid1.equals(ssid2) || ssid1.equals(ssid3) || ssid2.equals(ssid3)) {
             Toast.makeText(this, "Hotspots must be unique", Toast.LENGTH_SHORT).show();
@@ -223,6 +229,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveDataToCSV(String ssid1, String ssid2, String ssid3, float signalStrength1, float signalStrength2, float signalStrength3, int rateOfChange1, int rateOfChange2, int rateOfChange3) {
+        // Get the additional data entered by the user
+        String additionalData = etAdditionalField.getText().toString();
+
         // Use app-specific storage location instead of external storage
         File documentsDir = new File(getExternalFilesDir(null), "csv");
         if (!documentsDir.exists()) {
@@ -235,16 +244,15 @@ public class MainActivity extends AppCompatActivity {
             if (!csvFile.exists()) {
                 csvFile.createNewFile();
                 FileWriter writer = new FileWriter(csvFile);
-                writer.append("Timestamp,SSID_1,Signal_1,Rate_1,SSID_2,Signal_2,Rate_2,SSID_3,Signal_3,Rate_3\n");
+                writer.append("Timestamp,SSID_1,Signal_1,Rate_1,SSID_2,Signal_2,Rate_2,SSID_3,Signal_3,Rate_3,Additional_Data\n");
                 writer.close();
             }
 
             // Writing data to the CSV file
             FileWriter writer = new FileWriter(csvFile, true);
-            writer.append(System.currentTimeMillis() + "," + ssid1 + "," + signalStrength1 + "," + rateOfChange1 + "," + ssid2 + "," + signalStrength2 + "," + rateOfChange2 + "," + ssid3 + "," + signalStrength3 + "," + rateOfChange3 + "\n");
+            writer.append(System.currentTimeMillis() + "," + ssid1 + "," + signalStrength1 + "," + rateOfChange1 + "," + ssid2 + "," + signalStrength2 + "," + rateOfChange2 + "," + ssid3 + "," + signalStrength3 + "," + rateOfChange3 + "," + additionalData + "\n");
             writer.close();
 
-            // Toast.makeText(this, "Data saved to CSV file", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error saving data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
